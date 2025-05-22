@@ -5,9 +5,8 @@ import re
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
-from database import Quote, engine, Base
+from database import Quote, engine, Base, db_connection
 
 import gensim
 import gensim.downloader
@@ -145,21 +144,22 @@ class ImdbDataset:
 
 
 class QuotesSearch:
-    def __init__(self):
+    @db_connection
+    def __init__(self, session):
         self.vectorizer = Word2Vec()
         Base.metadata.create_all(engine)
-        with Session(engine) as session:
-            quotes = session.scalars(select(Quote)).all()
-            if len(quotes) == 0:
-                dataset = load_dataset("m-ric/english_historical_quotes", split="train")
-                quotes = [Quote(quote=item["quote"], author=item["author"]) for item in dataset]
-                session.add_all(quotes)
-                session.commit()
-            texts = [preprocess_text(quote.quote, self.vectorizer.is_punctuation) for quote in quotes]
-            self.corpus_vectors = self.vectorizer.vectorize_init(texts)
-            self.quote_ids = [quote.id for quote in quotes]
+        quotes = session.scalars(select(Quote)).all()
+        if len(quotes) == 0:
+            dataset = load_dataset("m-ric/english_historical_quotes", split="train")
+            quotes = [Quote(quote=item["quote"], author=item["author"]) for item in dataset]
+            session.add_all(quotes)
+            session.commit()
+        texts = [preprocess_text(quote.quote, self.vectorizer.is_punctuation) for quote in quotes]
+        self.corpus_vectors = self.vectorizer.vectorize_init(texts)
+        self.quote_ids = [quote.id for quote in quotes]
 
-    def search(self, input_text, num_similar=3):
+    @db_connection
+    def search(self, input_text, session, num_similar=3):
         if input_text is None or len(input_text) == 0:
             return []
         input_vector = self.vectorizer.vectorize_text([preprocess_text(input_text, self.vectorizer.is_punctuation)])
@@ -167,7 +167,6 @@ class QuotesSearch:
             return []
         similarities = cosine_similarity(input_vector, self.corpus_vectors).flatten()
         top_indices = similarities.argsort()[::-1][:num_similar]
-        with Session(engine) as session:
-            similar_texts = [(session.get(Quote, self.quote_ids[i]), similarities[i]) for i in top_indices if
-                             similarities[i] > 0.01]
+        similar_texts = [(session.get(Quote, self.quote_ids[i]), similarities[i]) for i in top_indices if
+                         similarities[i] > 0.01]
         return similar_texts
