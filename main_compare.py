@@ -23,11 +23,7 @@ def evaluate_model(model_name, model, dataset):
     f1_scores = []
     times = []
     for train_size in TRAIN_SIZES:
-        train_texts, test_texts, y_train, y_test = dataset.split_train_test_classifier(
-            train_size,
-            TEST_SIZE,
-            model.is_punctuation
-        )
+        train_texts, test_texts, y_train, y_test = dataset.split_train_test_classifier(train_size, TEST_SIZE)
         x_train = model.vectorize_init(train_texts)
         start = time.time()
         x_test = model.vectorize_text(test_texts)
