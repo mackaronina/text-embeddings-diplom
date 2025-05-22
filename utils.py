@@ -5,9 +5,7 @@ import re
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 from sqlalchemy import select
-
 from database import Quote, engine, Base, db_connection
-
 import gensim
 import gensim.downloader
 import numpy as np
