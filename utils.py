@@ -26,7 +26,7 @@ class BaseVectorizer(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def vectorize_text(self, texts):
+    def vectorize(self, texts):
         pass
 
 
@@ -37,7 +37,7 @@ class BagOfWords(BaseVectorizer):
     def vectorize_init(self, texts):
         return self.vectorizer.fit_transform(texts).toarray()
 
-    def vectorize_text(self, texts):
+    def vectorize(self, texts):
         return self.vectorizer.transform(texts).toarray()
 
 
@@ -48,7 +48,7 @@ class TFIDF(BaseVectorizer):
     def vectorize_init(self, texts):
         return self.vectorizer.fit_transform(texts).toarray()
 
-    def vectorize_text(self, texts):
+    def vectorize(self, texts):
         return self.vectorizer.transform(texts).toarray()
 
 
@@ -69,9 +69,6 @@ class Word2Vec(BaseVectorizer):
     def vectorize_init(self, texts):
         return self.vectorize(texts)
 
-    def vectorize_text(self, texts):
-        return self.vectorize(texts)
-
 
 class BERT(BaseVectorizer):
     def __init__(self, model_name):
@@ -90,9 +87,6 @@ class BERT(BaseVectorizer):
         return np.array(predictions)
 
     def vectorize_init(self, texts):
-        return self.vectorize(texts)
-
-    def vectorize_text(self, texts):
         return self.vectorize(texts)
 
 
@@ -153,7 +147,7 @@ class QuotesSearch:
     def search(self, input_text, session, num_similar=3):
         if input_text is None or len(input_text) == 0:
             return []
-        input_vector = self.vectorizer.vectorize_text([preprocess_text(input_text)])
+        input_vector = self.vectorizer.vectorize([preprocess_text(input_text)])
         if len(input_vector.shape) != 2:
             return []
         similarities = cosine_similarity(input_vector, self.corpus_vectors).flatten()

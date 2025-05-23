@@ -26,7 +26,7 @@ def evaluate_model(model_name, model, dataset):
         train_texts, test_texts, y_train, y_test = dataset.split_train_test_classifier(train_size, TEST_SIZE)
         x_train = model.vectorize_init(train_texts)
         start = time.time()
-        x_test = model.vectorize_text(test_texts)
+        x_test = model.vectorize(test_texts)
         end = time.time()
         times.append((end - start) / TEST_SIZE)
         report, f1 = train_classifier(x_train, x_test, y_train, y_test, dataset.labels)
