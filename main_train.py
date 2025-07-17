@@ -1,7 +1,7 @@
 from transformers import BertTokenizer, Trainer, TrainingArguments, DataCollatorForLanguageModeling, BertForMaskedLM
 
 from config import DEVICE, TEST_SIZE, SEED, BERT_TRAIN_SIZE
-from utils import ImdbDataset
+from utils.imdb_dataset import ImdbDataset
 
 
 def save_logs(trainer):

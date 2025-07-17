@@ -6,7 +6,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, f1_score
 
 from config import TRAIN_SIZES, TEST_SIZE
-from utils import ImdbDataset, BagOfWords, TFIDF, Word2Vec, BERT
+from utils.imdb_dataset import ImdbDataset
+from utils.vectorizers import BagOfWords, TFIDF, Word2Vec, BERT
 
 
 def train_classifier(x_train, x_test, y_train, y_test, labels):

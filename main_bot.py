@@ -6,7 +6,7 @@ from aiogram.filters.command import Command
 from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
 
 from config import BOT_TOKEN
-from utils import QuotesSearch
+from utils.quotes_search import QuotesSearch
 
 logging.basicConfig(level=logging.INFO)
 
