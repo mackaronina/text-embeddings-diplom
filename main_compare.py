@@ -32,7 +32,7 @@ def evaluate_model(model_name: str, model: BaseVectorizer, dataset: ImdbDataset)
         end = time.time()
         times.append((end - start) / TEST_SIZE)
         report, f1 = train_classifier(x_train, x_test, y_train, y_test, dataset.labels)
-        print(f"Report for {model_name} with train size {train_size}\n{report}\n")
+        print(f'Report for {model_name} with train size {train_size}\n{report}\n')
         f1_scores.append(f1)
     time_per_text = np.mean(times)
     return f1_scores, float(time_per_text)
@@ -42,9 +42,9 @@ def show_plot_results(results_f1: dict[str, tuple[list[int], list[float]]]) -> N
     plt.figure(figsize=(10, 6))
     for label, (train_sizes, f1_scores) in results_f1.items():
         plt.plot(train_sizes, f1_scores, marker='o', label=label)
-    plt.title("Comparison of text vectorization algorithms")
-    plt.xlabel("Training set size")
-    plt.ylabel("F1-score")
+    plt.title('Comparison of text vectorization algorithms')
+    plt.xlabel('Training set size')
+    plt.ylabel('F1-score')
     plt.legend()
     plt.grid(True)
     plt.show()
@@ -55,20 +55,20 @@ def main() -> None:
     results_times = {}
     dataset = ImdbDataset()
     models = {
-        "Bag of Words": BagOfWords(),
-        "TF-IDF": TFIDF(),
-        "Word2Vec": Word2Vec(),
-        "BERT": BERT('bert-base-uncased'),
-        "fine-tuned BERT": BERT('./train_results/model'),
+        'Bag of Words': BagOfWords(),
+        'TF-IDF': TFIDF(),
+        'Word2Vec': Word2Vec(),
+        'BERT': BERT('bert-base-uncased'),
+        'fine-tuned BERT': BERT('./train_results/model'),
     }
     for model_name, model in models.items():
         f1_scores, time_per_text = evaluate_model(model_name, model, dataset)
         results_f1[model_name] = (TRAIN_SIZES, f1_scores)
         results_times[model_name] = time_per_text
     show_plot_results(results_f1)
-    print("\n\nAverage calculation time for each text")
+    print('\n\nAverage calculation time for each text')
     for model_name, time_per_text in results_times.items():
-        print(f"{model_name}: {time_per_text:.5f} seconds")
+        print(f'{model_name}: {time_per_text:.5f} seconds')
 
 
 if __name__ == '__main__':

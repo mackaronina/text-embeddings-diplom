@@ -15,8 +15,8 @@ class QuotesSearch:
         Base.metadata.create_all(engine)
         quotes = session.scalars(select(Quote)).all()
         if len(quotes) == 0:
-            dataset = load_dataset("m-ric/english_historical_quotes", split="train")
-            quotes = [Quote(quote=item["quote"], author=item["author"]) for item in dataset]
+            dataset = load_dataset('m-ric/english_historical_quotes', split='train')
+            quotes = [Quote(quote=item['quote'], author=item['author']) for item in dataset]
             session.add_all(quotes)
             session.commit()
         texts = [preprocess_text(quote.quote) for quote in quotes]

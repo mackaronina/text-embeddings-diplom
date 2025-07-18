@@ -49,9 +49,9 @@ class TFIDF(BaseVectorizer):
 
 class Word2Vec(BaseVectorizer):
     def __init__(self):
-        self._wv = gensim.downloader.load("word2vec-google-news-300")
-        nltk.download("stopwords")
-        self._stop_words = set(stopwords.words("english"))
+        self._wv = gensim.downloader.load('word2vec-google-news-300')
+        nltk.download('stopwords')
+        self._stop_words = set(stopwords.words('english'))
 
     def vectorize(self, texts: list[str]) -> np.ndarray:
         vectors = []

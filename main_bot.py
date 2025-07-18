@@ -16,7 +16,7 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 
-@dp.message(Command("start"))
+@dp.message(Command('start'))
 async def cmd_start(message: Message) -> None:
     await message.answer("Hi, I'm a bot that you can use to search for quotes via inline mode")
 
@@ -28,10 +28,10 @@ async def show_autocomplete(inline_query: InlineQuery) -> None:
     for quote, similarity in search_results:
         full_text = quote.quote
         author = quote.author
-        truncated_text = full_text[:150] + "..." if len(full_text) > 150 else full_text
+        truncated_text = full_text[:150] + '...' if len(full_text) > 150 else full_text
         inline_results.append(InlineQueryResultArticle(
             id=str(quote.id),
-            title=f"{author} ({similarity * 100:.2f}%)",
+            title=f'{author} ({similarity * 100:.2f}%)',
             description=truncated_text,
             input_message_content=InputTextMessageContent(
                 message_text=f'"{full_text}" - {author}'
@@ -44,5 +44,5 @@ async def main() -> None:
     await dp.start_polling(bot)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())

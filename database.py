@@ -25,7 +25,7 @@ class Base(DeclarativeBase):
 
 
 class Quote(Base):
-    __tablename__ = "quotes"
+    __tablename__ = 'quotes'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     quote: Mapped[str]
     author: Mapped[str]
