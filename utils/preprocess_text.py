@@ -1,7 +1,7 @@
 import re
 
 
-def preprocess_text(text):
+def preprocess_text(text: str) -> str:
     text = text.lower()
     # Remove HTML tags
     text = re.sub(r"<.*?>", "", text)

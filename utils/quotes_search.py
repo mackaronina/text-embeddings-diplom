@@ -1,15 +1,16 @@
 from datasets import load_dataset
 from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from database import Quote, engine, Base, db_connection
+from database import Quote, engine, Base, connection
 from utils.preprocess_text import preprocess_text
 from utils.vectorizers import Word2Vec
 
 
 class QuotesSearch:
-    @db_connection
-    def __init__(self, session):
+    @connection
+    def __init__(self, session: Session):
         self._vectorizer = Word2Vec()
         Base.metadata.create_all(engine)
         quotes = session.scalars(select(Quote)).all()
@@ -22,8 +23,9 @@ class QuotesSearch:
         self._corpus_vectors = self._vectorizer.vectorize_init(texts)
         self._quote_ids = [quote.id for quote in quotes]
 
-    @db_connection
-    def search(self, input_text, session, num_similar=3):
+    @connection
+    def search(self, input_text: str | None, session: Session, num_similar: int = 3) \
+            -> list[tuple[Quote | None, float]]:
         if input_text is None or len(input_text) == 0:
             return []
         input_vector = self._vectorizer.vectorize([preprocess_text(input_text)])

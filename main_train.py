@@ -4,13 +4,13 @@ from config import DEVICE, TEST_SIZE, SEED, BERT_TRAIN_SIZE
 from utils.imdb_dataset import ImdbDataset
 
 
-def save_logs(trainer):
+def save_logs(trainer: Trainer) -> None:
     with open("./train_results/log.txt", "w", encoding="utf-8") as log_file:
         for line in trainer.state.log_history:
             log_file.write(f"{line}\n")
 
 
-def main():
+def main() -> None:
     dataset = ImdbDataset()
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     model = BertForMaskedLM.from_pretrained("bert-base-uncased").to(DEVICE)

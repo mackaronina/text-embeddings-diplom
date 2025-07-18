@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command
-from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
+from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent, Message
 
 from config import BOT_TOKEN
 from utils.quotes_search import QuotesSearch
@@ -17,12 +17,12 @@ dp = Dispatcher()
 
 
 @dp.message(Command("start"))
-async def cmd_start(message: types.Message):
+async def cmd_start(message: Message) -> None:
     await message.answer("Hi, I'm a bot that you can use to search for quotes via inline mode")
 
 
 @dp.inline_query()
-async def show_autocomplete(inline_query: InlineQuery):
+async def show_autocomplete(inline_query: InlineQuery) -> None:
     search_results = searcher.search(inline_query.query)
     inline_results = []
     for quote, similarity in search_results:
@@ -40,7 +40,7 @@ async def show_autocomplete(inline_query: InlineQuery):
     await inline_query.answer(inline_results, cache_time=3600)
 
 
-async def main():
+async def main() -> None:
     await dp.start_polling(bot)
 
 

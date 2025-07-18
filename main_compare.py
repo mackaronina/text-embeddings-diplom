@@ -7,10 +7,11 @@ from sklearn.metrics import classification_report, f1_score
 
 from config import TRAIN_SIZES, TEST_SIZE
 from utils.imdb_dataset import ImdbDataset
-from utils.vectorizers import BagOfWords, TFIDF, Word2Vec, BERT
+from utils.vectorizers import BagOfWords, TFIDF, Word2Vec, BERT, BaseVectorizer
 
 
-def train_classifier(x_train, x_test, y_train, y_test, labels):
+def train_classifier(x_train: np.ndarray, x_test: np.ndarray, y_train: list[int], y_test: list[int],
+                     labels: list[str]) -> tuple[str, float]:
     model = LogisticRegression(C=5, max_iter=1000)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
@@ -20,7 +21,7 @@ def train_classifier(x_train, x_test, y_train, y_test, labels):
             f1_score(y_test, y_pred, average='weighted', labels=labels))
 
 
-def evaluate_model(model_name, model, dataset):
+def evaluate_model(model_name: str, model: BaseVectorizer, dataset: ImdbDataset) -> tuple[list[float], float]:
     f1_scores = []
     times = []
     for train_size in TRAIN_SIZES:
@@ -34,13 +35,13 @@ def evaluate_model(model_name, model, dataset):
         print(f"Report for {model_name} with train size {train_size}\n{report}\n")
         f1_scores.append(f1)
     time_per_text = np.mean(times)
-    return f1_scores, time_per_text
+    return f1_scores, float(time_per_text)
 
 
-def show_plot_results(results_f1):
+def show_plot_results(results_f1: dict[str, tuple[list[int], list[float]]]) -> None:
     plt.figure(figsize=(10, 6))
-    for label, (sizes, times) in results_f1.items():
-        plt.plot(sizes, times, marker='o', label=label)
+    for label, (train_sizes, f1_scores) in results_f1.items():
+        plt.plot(train_sizes, f1_scores, marker='o', label=label)
     plt.title("Comparison of text vectorization algorithms")
     plt.xlabel("Training set size")
     plt.ylabel("F1-score")
@@ -49,7 +50,7 @@ def show_plot_results(results_f1):
     plt.show()
 
 
-def main():
+def main() -> None:
     results_f1 = {}
     results_times = {}
     dataset = ImdbDataset()

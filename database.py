@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 from sqlalchemy import Integer, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 
@@ -6,8 +8,8 @@ from config import DB_URL
 engine = create_engine(DB_URL)
 
 
-def db_connection(method):
-    def wrapper(*args, **kwargs):
+def connection(method: Callable) -> Callable:
+    def wrapper(*args, **kwargs) -> Any:
         with Session(engine) as session:
             try:
                 return method(*args, session=session, **kwargs)

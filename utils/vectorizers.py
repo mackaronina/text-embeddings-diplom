@@ -17,11 +17,11 @@ from config import DEVICE
 
 class BaseVectorizer(abc.ABC):
     @abc.abstractmethod
-    def vectorize_init(self, texts):
+    def vectorize_init(self, texts: list[str]) -> np.ndarray:
         pass
 
     @abc.abstractmethod
-    def vectorize(self, texts):
+    def vectorize(self, texts: list[str]) -> np.ndarray:
         pass
 
 
@@ -29,10 +29,10 @@ class BagOfWords(BaseVectorizer):
     def __init__(self):
         self._vectorizer = CountVectorizer()
 
-    def vectorize_init(self, texts):
+    def vectorize_init(self, texts: list[str]) -> np.ndarray:
         return self._vectorizer.fit_transform(texts).toarray()
 
-    def vectorize(self, texts):
+    def vectorize(self, texts: list[str]) -> np.ndarray:
         return self._vectorizer.transform(texts).toarray()
 
 
@@ -40,10 +40,10 @@ class TFIDF(BaseVectorizer):
     def __init__(self):
         self._vectorizer = TfidfVectorizer()
 
-    def vectorize_init(self, texts):
+    def vectorize_init(self, texts: list[str]) -> np.ndarray:
         return self._vectorizer.fit_transform(texts).toarray()
 
-    def vectorize(self, texts):
+    def vectorize(self, texts: list[str]) -> np.ndarray:
         return self._vectorizer.transform(texts).toarray()
 
 
@@ -53,7 +53,7 @@ class Word2Vec(BaseVectorizer):
         nltk.download("stopwords")
         self._stop_words = set(stopwords.words("english"))
 
-    def vectorize(self, texts):
+    def vectorize(self, texts: list[str]) -> np.ndarray:
         vectors = []
         for text in texts:
             words = nltk.word_tokenize(text)
@@ -61,16 +61,16 @@ class Word2Vec(BaseVectorizer):
             vectors.append(np.mean(word_vectors, axis=0))
         return np.array(vectors)
 
-    def vectorize_init(self, texts):
+    def vectorize_init(self, texts: list[str]) -> np.ndarray:
         return self.vectorize(texts)
 
 
 class BERT(BaseVectorizer):
-    def __init__(self, model_name):
+    def __init__(self, model_name: str):
         self._tokenizer = BertTokenizer.from_pretrained(model_name)
         self._model = BertModel.from_pretrained(model_name).to(DEVICE)
 
-    def vectorize(self, texts, batch_size=64):
+    def vectorize(self, texts: list[str], batch_size: int = 64) -> np.ndarray:
         predictions = []
         for i in range(0, len(texts), batch_size):
             batch_texts = texts[i:i + batch_size]
@@ -81,5 +81,5 @@ class BERT(BaseVectorizer):
             predictions.extend(batch_predictions)
         return np.array(predictions)
 
-    def vectorize_init(self, texts):
+    def vectorize_init(self, texts: list[str]) -> np.ndarray:
         return self.vectorize(texts)

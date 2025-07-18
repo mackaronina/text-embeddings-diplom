@@ -1,4 +1,6 @@
-from datasets import load_dataset
+from typing import Callable
+
+from datasets import load_dataset, Dataset
 
 from config import SEED
 from utils.preprocess_text import preprocess_text
@@ -9,7 +11,8 @@ class ImdbDataset:
         self._dataset = load_dataset("imdb")
         self.labels = ["neg", "pos"]
 
-    def split_train_test_classifier(self, train_size, test_size):
+    def split_train_test_classifier(self, train_size: int, test_size: int) \
+            -> tuple[list[str], list[str], list[int], list[int]]:
         train_sample = self._dataset["train"].shuffle(seed=SEED).select(range(train_size))
         test_sample = self._dataset["test"].shuffle(seed=SEED).select(range(test_size))
         train_texts = [preprocess_text(text) for text in train_sample["text"]]
@@ -18,7 +21,7 @@ class ImdbDataset:
         y_test = test_sample["label"]
         return train_texts, test_texts, y_train, y_test
 
-    def split_train_test_bert(self, train_size, test_size, tokenize):
+    def split_train_test_bert(self, train_size: int, test_size: int, tokenize: Callable) -> tuple[Dataset, Dataset]:
         dataset = self._dataset.remove_columns("label")
 
         def preprocess(example):
