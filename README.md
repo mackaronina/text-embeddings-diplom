@@ -16,9 +16,11 @@ The code consists of three main scripts:
 ### Demonstration
 
 Dependence of F1 score on the size of the training sample for different vectorization methods:
+
 ![comprasion_visualisation](screenshots/comprasion_visualisation.png)
 
 Example of using a Telegram bot:
+
 ![bot_demo1](screenshots/bot_demo1.png)
 ![bot_demo2](screenshots/bot_demo2.png)
 
